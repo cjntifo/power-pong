@@ -5,12 +5,12 @@ import java.awt.Graphics2D;
 public class Ball
 {
    public static final int DIAMETER = 30;
-   int x = 0;
-   int y = 0;
-   int xa = 1;
-   int ya = 1;
+   private int x = 0;
+   private int y = 0;
+   private int xa = 1;
+   private int ya = 1;
    private MiniTennis game;
-   int endBar = -1;
+   public int endBar = -1;
    
    public Ball(MiniTennis game)
    {
@@ -45,15 +45,7 @@ public class Ball
             case 1:
                game.resizeActive = true;
                break;
-            case 3:
-               //game.slowActive = true;
-               break;
-            case 5:
-               //game.barActive = true;
-               break;
-            /*case endBar:          //Constant Expression Required...
-               game.resizeRacquet(100);
-               break;*/
+            //Cases are expandable for later changes
             default:
                //Do nothing...
                break;        

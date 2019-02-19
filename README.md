@@ -10,6 +10,11 @@ D - (Cose: £200) create a bar for ONE TURN so you cannot miss.
 ## How to use?
 Use the standard left and right keys to move the racquet.
 
+## Screenshots
+<img src="screenshot_2.png" />
+<br>
+<img src="screenshot_1.png" />
+
 ## Credits
 Inspired by [Edu4Java](http://www.edu4java.com/) tutorial.
 

@@ -27,22 +27,79 @@ import javax.swing.JPanel;
 
 //https://github.com/m-gagne/limit.js
 
-@SuppressWarnings("serial")
-public class MiniTennis extends JPanel
+//@SuppressWarnings("serial")
+public class MiniTennis extends JPanel implements Runnable
 {  
    Ball ball = new Ball(this);
    Racquet racquet = new Racquet(this);
-   //int speed = 1;
-   int racquetSpeed = 1;
-   int ballSpeed = 1;
-   int score = 0;
    private static final int HEIGHT = 400;
-   static final int SLOW_COST = 150;
-   static final int BAR_COST = 200;
-   private int cash = 0;
-   boolean resizeActive = false;
-   boolean slowActive = false;
-   boolean barActive = false;
+   
+   private static boolean running = false;
+   private Thread thread;
+   
+   public static final int SLOW_COST = 150;
+   public static final int BAR_COST = 200;
+   
+   private int cash;
+   public int score;
+   public int racquetSpeed = 1, ballSpeed = 1 ;  //int speed = 1;
+   public boolean resizeActive, slowActive, barActive;
+   
+   private void init()
+   {
+      cash = 0;
+      score = 0;
+      
+      resizeActive = false;
+      slowActive = false;
+      barActive = false;
+   }
+   
+   public synchronized void start()
+   {
+      if(running)
+         return;
+         
+      running = true;
+      thread = new Thread(this);
+      thread.start();
+   }
+   
+   public void run()
+   {
+      System.out.println("Running");
+      
+      long lastTime = System.nanoTime();
+      double amountOfTicks = 60.0;
+      double ns = 1000000000 / amountOfTicks;
+      double delta = 0;
+      long timer = System.currentTimeMillis();
+      int updates = 0;
+      int frames = 0;
+      
+      while(running)
+      {
+         long now = System.nanoTime();
+         delta += (now - lastTime) / ns;
+         lastTime = now;
+         while(delta >= 1)
+         {
+            move();
+            updates++;
+            delta--;
+         }
+         repaint();
+         frames++;
+         
+         if(System.currentTimeMillis() - timer > 1000)
+         {
+            timer += 1000;
+            System.out.println("FPS: " + frames + " TICKS: " + updates);
+            frames = 0;
+            updates = 0; 
+         }
+      }
+   }
    
    public int getBalance()
    {
@@ -70,14 +127,9 @@ public class MiniTennis extends JPanel
    
    private int getScore()
    {
-      //return speed - 1;
-      return score;
+      return score;  //return (speed - 1);
    }
    
-   /*public int getHeight()
-   {
-      return HEIGHT;
-   }*/
    
    public MiniTennis()
    {
@@ -189,27 +241,8 @@ public class MiniTennis extends JPanel
       System.exit(ABORT);
    }
    
-   public static void main(String[] args) throws InterruptedException
-   {
-      //Do something...
-      JFrame frame = new JFrame("Mini Tennis");
-      MiniTennis game = new MiniTennis();
-            
-      //Keyboard keyboard = new Keyboard();
-      //frame.add(keyboard);
-      
-      frame.add(game);
-      frame.setSize(300, 400);
-      frame.setLocationRelativeTo(null);
-      frame.setVisible(true);
-      frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      System.out.println(game.getHeight());
-      
-      while(true)
-      {
-         game.move();
-         game.repaint();
-         Thread.sleep(10);
-      }
+   public static void main(String[] args)
+   {      
+      Window window = new Window(300, 400, "Carl's Magical Power Pong", new MiniTennis());
    }
 }
