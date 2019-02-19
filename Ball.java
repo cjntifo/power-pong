@@ -20,15 +20,24 @@ public class Ball
    public void move()
    {
       boolean changeDirection = true;
-      if(x + xa < 0)
+      
+      if(x + xa < 0) //If ball collides with LEFTMOST border, bounce off the wall.
+      {
          xa = game.ballSpeed;
-      else if(x + xa > game.getWidth() - DIAMETER)
+      }
+      else if(x + xa > game.getWidth() - DIAMETER) //If ball collides with RIGHTMOST border, bounce off the wall.
+      {
          xa = -game.ballSpeed;
-      else if(y + ya < 0)
+      }
+      else if(y + ya < 0) //If ball collides with TOP border, bounce off the wall.
+      {
          ya = game.ballSpeed;
-      else if(y + ya > game.getHeight() - DIAMETER)
-         game.GameOver(); //ya = -1;
-      else if(collision())
+      }
+      else if(y + ya > game.getHeight() - DIAMETER) //If ball collides with BOTTOM border, GAMEOVER!
+      {
+         game.GameOver();
+      }
+      else if(collision()) //If ball collides with the Player's racquet, then handle game events.
       {
          ya = -game.ballSpeed;
          y = game.racquet.getTopY() - DIAMETER;
@@ -42,40 +51,44 @@ public class Ball
          
          switch(game.score)
          {
+            //Resize powerup is accesible after one hit...
             case 1:
                game.resizeActive = true;
                break;
             //Cases are expandable for later changes
             default:
-               //Do nothing...
                break;        
          }
          
-         int balance = game.getBalance();
-         
-         if(balance > game.SLOW_COST)
+         //If the player has enough money for a new PowerUp...
+         if(game.getBalance() > game.SLOW_COST)
          {
             game.slowActive = true;
          }
-         if(balance > game.BAR_COST)
+         if(game.getBalance() > game.BAR_COST)
          {
             game.barActive = true;
          }
          
+         //If BAR PowerUp is ended (endBar), resize racquet back to larger size...
          if(game.score == endBar)
          {
             game.resizeRacquet(100);
             endBar = -1;
          }
       }
+      //If none of these event have occured, the ball has not changed direction...
       else
+      {
          changeDirection = false;
+      }
          
       if(changeDirection)
       {
          //Sound.BALL.play();
       }
       
+      //Update the ball's coordinates with delta values (x, y) + (xa, ya)...
       x += xa;
       y += ya;
    }
